@@ -4,38 +4,33 @@
 This project demonstrates a unique approach to creating and managing a 3D scene across multiple browser windows using Three.js and localStorage. It's designed for developers interested in advanced web graphics and window management techniques.
 
 ## Features
-- 3D scene creation and rendering with Three.js.
-- Synchronization of 3D scenes across multiple browser windows.
-- Dynamic window management and state synchronization using localStorage.
+- 3D scene creation and rendering with Three.js
+- Synchronization of 3D scenes across multiple browser windows
+- Dynamic window management and state synchronization using localStorage
 
-## Installation
-Clone the repository and open `index.html` in your browser to start exploring the 3D scene.
+## Running the Project
+1. Start a local Python HTTP server:
+   - For Python 3.x:
+     ```
+     python -m http.server 8000
+     ```
+   - For Python 2.x:
+     ```
+     python -m SimpleHTTPServer 8000
+     ```
+2. Open your browser and navigate to `http://localhost:8000`
+3. Click anywhere to create new windows with synchronized 3D scenes
 
-```
-git clone https://github.com/bgstaal/multipleWindow3dScene
-```
-## Usage
-The main application logic is contained within `main.js` and `WindowManager.js`. The 3D scene is rendered in `index.html`, which serves as the entry point of the application.
-
-## Structure and Components
-- `index.html`: Entry point that sets up the HTML structure and includes the Three.js library and the main script.
-- `WindowManager.js`: Core class managing window creation, synchronization, and state management across multiple windows.
-- `main.js`: Contains the logic for initializing the 3D scene, handling window events, and rendering the scene.
-- `three.r124.min.js`: Minified version of the Three.js library used for 3D graphics rendering.
-
-## Detailed Functionality
-- `WindowManager.js` handles the lifecycle of multiple browser windows, including creation, synchronization, and removal. It uses localStorage to maintain state across windows.
-- `main.js` initializes the 3D scene using Three.js, manages the window's resize events, and updates the scene based on window interactions.
-
-## Contributing
-Contributions to enhance or expand the project are welcome. Feel free to fork the repository, make changes, and submit pull requests.
+## Project Structure
+- `index.html`: Entry point and HTML structure
+- `WindowManager.js`: Manages window synchronization and state
+- `main.js`: 3D scene initialization and rendering logic
+- `three.r124.min.js`: Three.js library
 
 ## License
 This project is open-sourced under the MIT License.
 
 ## Acknowledgments
-- The Three.js team for their comprehensive 3D library.
-- x.com/didntdrinkwater for this readme.
-
-## Contact
-For more information and updates, follow [@_nonfigurativ_](https://twitter.com/_nonfigurativ_) on Twitter.
+- The Three.js team for their comprehensive 3D library
+- This is a fork of the original project with modifications to implement spheres instead of the original geometric shapes.
+- Original repository by [@_nonfigurativ_](https://twitter.com/_nonfigurativ_)

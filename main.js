@@ -65,26 +65,38 @@ else
 		}, 500)	
 	}
 
-	function setupScene ()
-	{
-		camera = new t.OrthographicCamera(0, 0, window.innerWidth, window.innerHeight, -10000, 10000);
+	function setupScene() {
+		let width = window.innerWidth;
+		let height = window.innerHeight;
+		camera = new t.OrthographicCamera(0, width, 0, height, -10000, 10000);
 		
-		camera.position.z = 2.5;
-		near = camera.position.z - .5;
-		far = camera.position.z + 0.5;
-
+		camera.position.z = 500;
+		camera.lookAt(0, 0, 0);
+		near = camera.position.z - 500;
+		far = camera.position.z + 500;
+	
 		scene = new t.Scene();
-		scene.background = new t.Color(0.0);
-		scene.add( camera );
-
+		scene.background = new t.Color(0x000000);
+		scene.add(camera);
+	
+		// Adjust light positions and intensity
+		const ambientLight = new t.AmbientLight(0xffffff, 0.5);
+		scene.add(ambientLight);
+	
+		const directionalLight = new t.DirectionalLight(0xffffff, 1);
+		directionalLight.position.set(0, 0, 1000);
+		scene.add(directionalLight);
+	
 		renderer = new t.WebGLRenderer({antialias: true, depthBuffer: true});
 		renderer.setPixelRatio(pixR);
-	    
-	  	world = new t.Object3D();
+		renderer.setSize(width, height);
+		
+		world = new t.Object3D();
+		world.position.z = 0;
 		scene.add(world);
-
+	
 		renderer.domElement.setAttribute("id", "scene");
-		document.body.appendChild( renderer.domElement );
+		document.body.appendChild(renderer.domElement);
 	}
 
 	function setupWindowManager ()
@@ -107,33 +119,58 @@ else
 	{
 		updateNumberOfCubes();
 	}
-
-	function updateNumberOfCubes ()
-	{
+	
+	function updateNumberOfCubes() {
 		let wins = windowManager.getWindows();
-
+	
 		// remove all cubes
 		cubes.forEach((c) => {
 			world.remove(c);
 		})
-
+	
 		cubes = [];
-
-		// add new cubes based on the current window setup
-		for (let i = 0; i < wins.length; i++)
-		{
+	
+		// add new objects based on the current window setup
+		for (let i = 0; i < wins.length; i++) {
 			let win = wins[i];
-
+	
 			let c = new t.Color();
 			c.setHSL(i * .1, 1.0, .5);
-
+	
 			let s = 100 + i * 50;
-			let cube = new t.Mesh(new t.BoxGeometry(s, s, s), new t.MeshBasicMaterial({color: c , wireframe: true}));
-			cube.position.x = win.shape.x + (win.shape.w * .5);
-			cube.position.y = win.shape.y + (win.shape.h * .5);
+			// Create sphere with both solid and wireframe
+			let geometry = new t.SphereGeometry(s/2, 32, 32);
+			
+			// Create a group to hold both meshes
+			let group = new t.Group();
+			
+			// Add solid sphere
+			let solidSphere = new t.Mesh(
+				geometry,
+				new t.MeshPhongMaterial({
+					color: c,
+					transparent: true,
+					opacity: 0.5
+				})
+			);
+			group.add(solidSphere);
+			
+			// Add wireframe sphere
+			let wireSphere = new t.Mesh(
+				geometry,
+				new t.MeshBasicMaterial({
+					color: c,
+					wireframe: true
+				})
+			);
+			group.add(wireSphere);
+	
+			group.position.x = win.shape.x + (win.shape.w * .5);
+        group.position.y = win.shape.y + (win.shape.h * .5);
+        group.position.z = 0;  // Ensure spheres are at z=0
 
-			world.add(cube);
-			cubes.push(cube);
+        world.add(group);
+        cubes.push(group);
 		}
 	}
 
@@ -144,13 +181,11 @@ else
 		if (!easing) sceneOffset = sceneOffsetTarget;
 	}
 
-
 	function render ()
 	{
 		let t = getTime();
 
 		windowManager.update();
-
 
 		// calculate the new position based on the delta between current offset and new offset times a falloff value (to create the nice smoothing effect)
 		let falloff = .05;
@@ -163,13 +198,12 @@ else
 
 		let wins = windowManager.getWindows();
 
-
 		// loop through all our cubes and update their positions based on current window positions
 		for (let i = 0; i < cubes.length; i++)
 		{
 			let cube = cubes[i];
 			let win = wins[i];
-			let _t = t;// + i * .2;
+			let _t = t;
 
 			let posTarget = {x: win.shape.x + (win.shape.w * .5), y: win.shape.y + (win.shape.h * .5)}
 
@@ -185,13 +219,14 @@ else
 
 
 	// resize the renderer to fit the window size
-	function resize ()
-	{
+	function resize() {
 		let width = window.innerWidth;
-		let height = window.innerHeight
+		let height = window.innerHeight;
 		
 		camera = new t.OrthographicCamera(0, width, 0, height, -10000, 10000);
+		camera.position.z = 500;
+		camera.lookAt(0, 0, 0);
 		camera.updateProjectionMatrix();
-		renderer.setSize( width, height );
+		renderer.setSize(width, height);
 	}
 }
